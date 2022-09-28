@@ -10,10 +10,12 @@ Once vscode is installed, find the resulting directory where the repository was 
 
 Once visual studio code opens, it'll have loaded the directory as a project. The files structure in the explorer pane in vscode should match the directory exactly how it appears in the repo on github.
 
-Finally for the last step, all the necessary extensions need to be installed. hit ctrl+p and copy/paste in the following command and hit enter:
+The next step you'll need to do is install all the necessary extensions need to be installed. hit ctrl+p and copy/paste in the following command and hit enter:
 `ext install vscjava.vscode-java-pack esbenp.prettier-vscode Pivotal.vscode-spring-boot`
 
-Once the extensions are finished installing, everything should be good to go.
+Once the extensions are done installing, you'll need to find the file `src/main/resources/application.properties.example` and copy/paste it in the same directory and remove the `.example` in the name. **Do Not Delete it**. You'll need to then fill out the details as required. Particularly, you'll need to set the password field to the password of the postgres user from your local postgres installation.
+
+From there you should be good go start working.
 
 ## Quick Tour
 
