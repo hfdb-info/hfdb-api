@@ -1,0 +1,6 @@
+spring.datasource.url=jdbc:postgresql://localhost:5432/hfdb-database0
+spring.datasource.username=postgres
+spring.datasource.password=password
+# copy/paste this file to the same directory this example is in,
+# rename it to application.properties (remove the .example),
+# and configure as needed
