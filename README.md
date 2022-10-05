@@ -5,10 +5,12 @@ API layer for HFDB. This program allows the front end to grab the data from the 
 ## Development Setup
 
 First and foremost, all the applications need to be setup. In order to do this, chocolatey needs to be setup if not already done so. Open powershell (as admin) and run the following command: `Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))`
+
 **Do not click out of powershell and keep it in the foreground until it is finished**
 
 Chocolatey is finished installing, close and reopen powershell (as admin) and run the following command:
 `choco install git github-desktop maven openjdk vscode -y`
+
 **Do not click out of powershell and keep it in the foreground until it is finished**
 
 Some of these programs update on their own so run this command to pin them. It is highly recommended. Run the following commands to do so.
@@ -48,4 +50,5 @@ so when you hit F5 and start the project and navigate to `localhost:8080/somePat
 ## FAQ
 
 Q: When I load up the project in vscode after cloning the repo, vscode is throwing errors such as `Unbound classpath container`, `The type java.lang.Object cannot be resolved`, and numerous other errors.
+
 A: At this time, the best solution for this is to backup your data and reinstall windows from scratch. Nathan had this issue when he first cloned the repo. Justin went through and performed a clean install of Windows 10 in a VM following the instructions as described in the setup and couldn't reproduce the issue. If anyone encounters this issue, they're welcome to attempt to fix it theirself, (if they successfully do so, great! Report it to Justin so this can be updated.) but deadlines will not be adjusted to work around doing so.
