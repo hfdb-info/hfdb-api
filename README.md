@@ -4,28 +4,32 @@ API layer for HFDB. This program allows the front end to grab the data from the 
 
 ## Development Setup
 
-First and foremost, all the applications need to be setup. In order to do this, chocolatey needs to be setup if not already done so. Open powershell (as admin) and run the following command: `Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))`
+First and foremost, all the applications need to be setup. In order to do this, chocolatey needs to be setup if not already done so. Open powershell (as admin) and run the following command:<br/>`Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))`
 
 **Do not click out of powershell and keep it in the foreground until it is finished**
 
-Chocolatey is finished installing, close and reopen powershell (as admin) and run the following command:
+Chocolatey is finished installing, close and reopen powershell (as admin) and run the following command:<br/>
 `choco install git github-desktop maven openjdk vscode -y`
 
 **Do not click out of powershell and keep it in the foreground until it is finished**
 
-Some of these programs update on their own so run this command to pin them. It is highly recommended. Run the following commands to do so.
-`choco pin add -n=vscode`
+Some of these programs update on their own so run this command to pin them. It is highly recommended. Run the following commands to do so.<br/>
+`choco pin add -n=vscode`<br/>
 `choco pin add -n=github-desktop`
+
+The final program to be installed in chocolatey is postgresql. Run the following command in powershell (as admin):<br/>`choco install postgresql -y`
+
+**Do not click out of powershell and keep in the foreground unti it is finished**<br/>**One more thing...** after postgres has finished installing and before you close out powershell, the password to postgres has been printed to the console. Copy it store it somewhere. That is the password you will use to login to postgres.
 
 We are now finished with powershell so it can be closed.
 
 Next the repository needs to be cloned. Open github desktop and sign into it with your github account. Once signed in, clone this repository to a folder somewhere.
 
-Once github desktop has finished cloning the repository, make sure the branch selected is `development` **and not** `main` **or** `original template` **or any other branch if any exist**. The latter branches are reserved for special uses. Unless Justin says otherwise, only use the `development` branch.
+Once github desktop has finished cloning the repository, make sure the branch selected is `development` **and not** `main` **or** `original-template` **or any other branch if any exist**. The latter branches are reserved for special uses. Unless Justin says otherwise, only use the `development` branch.
 
 Once visual studio code opens, it'll have loaded the directory as a project. The files structure in the explorer pane in vscode should match the directory exactly how it appears in the repo on github.
 
-The next step to be accomplished is installing all the necessary extensions. With vscode open, hit ctrl+p and copy/paste in the following command and hit enter:
+The next step to be accomplished is installing all the necessary extensions. With vscode open, hit ctrl+p and copy/paste in the following command and hit enter:<br/>
 `ext install vscjava.vscode-java-pack esbenp.prettier-vscode Pivotal.vscode-boot-dev-pack`
 
 Once the extensions are finished installing, the last thing to do is setup the `application.properties` file. Navigate to `src/main/resources/application.properties.example` in the project directory, copy/paste it, and remove `.example` from the name. **Do not delete or rename the original file!** In application.properties, where it says password, replace it with the password to your local instance of postgres.
@@ -49,6 +53,6 @@ so when you hit F5 and start the project and navigate to `localhost:8080/somePat
 
 ## FAQ
 
-Q: When I load up the project in vscode after cloning the repo, vscode is throwing errors such as `Unbound classpath container`, `The type java.lang.Object cannot be resolved`, and numerous other errors.
+Q: When I load up the project in vscode after cloning the repo, vscode is throwing errors such as `Unbound classpath container`,<br/> `The type java.lang.Object cannot be resolved`, and numerous other errors.
 
 A: At this time, the best solution for this is to backup your data and reinstall windows from scratch. Nathan had this issue when he first cloned the repo. Justin went through and performed a clean install of Windows 10 in a VM following the instructions as described in the setup and couldn't reproduce the issue. If anyone encounters this issue, they're welcome to attempt to fix it theirself, (if they successfully do so, great! Report it to Justin so this can be updated.) but deadlines will not be adjusted to work around doing so.
