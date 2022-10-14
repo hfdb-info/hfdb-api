@@ -9,5 +9,4 @@ public class HfdbApiApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(HfdbApiApplication.class, args);
 	}
-
 }
