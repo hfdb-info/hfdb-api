@@ -47,7 +47,12 @@ public class HelperDaoImpl implements HelperDao {
             filter += "AND price >= " + min;
 
         String sql = "SELECT products.sku "
-                + "FROM products INNER JOIN retailprices ON products.sku=retailprices.sku "
+                + "FROM products INNER JOIN (select retailprices.sku, "
+                + "price, ts from retailprices inner join (select retailprices.sku, "
+                + "max(ts) as newestPriceTS from retailprices, products where "
+                + "products.sku=retailprices.sku group by retailprices.sku) "
+                + "as newestPriceCalc on ts = newestPriceTS and retailprices.sku = "
+                + "newestPriceCalc.sku) AS latestPriceCalc ON products.sku=latestPriceCalc.sku "
                 + "WHERE LOWER(name) LIKE LOWER(?) " + filter + ";";
 
         ProductSearchRowMapper map = new ProductSearchRowMapper();
