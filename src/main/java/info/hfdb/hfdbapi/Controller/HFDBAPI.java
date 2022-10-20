@@ -55,8 +55,8 @@ public class HFDBAPI {
      * @param max  the maximum price search term
      * @return a list of ProductSKUs that fit the given parameters
      */
-    @GetMapping("/searchName/{name}/{min}/{max}")
-    public List<ProductSKU> searchName(@PathVariable("name") String name, @PathVariable("min") int min,
+    @GetMapping("/nameSearch/{name}/{min}/{max}")
+    public List<ProductSKU> nameSearch(@PathVariable("name") String name, @PathVariable("min") int min,
             @PathVariable("max") int max) {
         List<ProductSKU> a = helper.nameSearch("%" + name + "%", min, max);
         return a;
