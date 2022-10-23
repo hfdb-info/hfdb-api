@@ -7,10 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
-import info.hfdb.hfdbapi.Controller.Product;
-import info.hfdb.hfdbapi.Controller.ProductRowMapper;
-import info.hfdb.hfdbapi.Controller.ProductSKU;
-import info.hfdb.hfdbapi.Controller.ProductSearchRowMapper;
+import info.hfdb.hfdbapi.Controller.*;
 
 @Repository
 public class HelperDaoImpl implements HelperDao {
@@ -39,7 +36,7 @@ public class HelperDaoImpl implements HelperDao {
      */
     public List<ProductSKU> nameSearch(String name, int min, int max) {
 
-        // createView();
+        createView();
         String filter = "";
 
         if (max != -1)
@@ -87,8 +84,14 @@ public class HelperDaoImpl implements HelperDao {
      */
     public void createView() {
 
-        ProductSearchRowMapper map = new ProductSearchRowMapper();
-        List<ProductSKU> a = jdbcTemplate.query("SELECT * FROM latestprice;", map);
+        String query = """
+                SELECT schemaname, viewname
+                FROM pg_catalog.pg_views
+                WHERE schemaname NOT IN('pg_catalog', 'information_schema')
+                ORDER BY schemaname, viewname;
+                    """;
+        CatalogRowMapper map = new CatalogRowMapper();
+        List<PgCatalog> a = jdbcTemplate.query(query, map);
         int count = a.size();
 
         if (count == 0) {
