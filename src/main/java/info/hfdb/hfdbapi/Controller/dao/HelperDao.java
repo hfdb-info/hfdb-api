@@ -3,7 +3,8 @@ package info.hfdb.hfdbapi.Controller.dao;
 import java.util.List;
 import java.util.Optional;
 
-import info.hfdb.hfdbapi.Controller.*;
+import info.hfdb.hfdbapi.Controller.Product;
+import info.hfdb.hfdbapi.Controller.ProductSKU;
 
 public interface HelperDao {
 

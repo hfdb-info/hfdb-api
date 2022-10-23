@@ -7,7 +7,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
-import info.hfdb.hfdbapi.Controller.*;
+import info.hfdb.hfdbapi.Controller.CatalogRowMapper;
+import info.hfdb.hfdbapi.Controller.PgCatalog;
+import info.hfdb.hfdbapi.Controller.Product;
+import info.hfdb.hfdbapi.Controller.ProductRowMapper;
+import info.hfdb.hfdbapi.Controller.ProductSKU;
+import info.hfdb.hfdbapi.Controller.ProductSearchRowMapper;
 
 @Repository
 public class HelperDaoImpl implements HelperDao {
