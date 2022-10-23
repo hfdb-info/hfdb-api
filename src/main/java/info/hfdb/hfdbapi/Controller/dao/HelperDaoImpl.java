@@ -86,10 +86,10 @@ public class HelperDaoImpl implements HelperDao {
 
         String query = """
                 SELECT schemaname, viewname
-                FROM pg_catalog.pg_views
-                WHERE schemaname NOT IN('pg_catalog', 'information_schema')
+                FROM pg_catalog.pg_views WHERE schemaname
+                NOT IN('pg_catalog', 'information_schema') AND viewname = 'latestprice'
                 ORDER BY schemaname, viewname;
-                    """;
+                        """;
         CatalogRowMapper map = new CatalogRowMapper();
         List<PgCatalog> a = jdbcTemplate.query(query, map);
         int count = a.size();
