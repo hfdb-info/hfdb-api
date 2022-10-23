@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+import info.hfdb.hfdbapi.Controller.CatalogRowMapper;
+import info.hfdb.hfdbapi.Controller.PgCatalog;
 import info.hfdb.hfdbapi.Controller.Product;
 import info.hfdb.hfdbapi.Controller.ProductRowMapper;
 import info.hfdb.hfdbapi.Controller.ProductSKU;
@@ -39,6 +41,7 @@ public class HelperDaoImpl implements HelperDao {
      */
     public List<ProductSKU> nameSearch(String name, int min, int max) {
 
+        createView();
         String filter = "";
 
         if (max != -1)
@@ -46,14 +49,9 @@ public class HelperDaoImpl implements HelperDao {
         if (min != -1)
             filter += "AND price >= " + min;
 
-        String sql = "SELECT products.sku "
-                + "FROM products INNER JOIN (select retailprices.sku, "
-                + "price, ts from retailprices inner join (select retailprices.sku, "
-                + "max(ts) as newestPriceTS from retailprices, products where "
-                + "products.sku=retailprices.sku group by retailprices.sku) "
-                + "as newestPriceCalc on ts = newestPriceTS and retailprices.sku = "
-                + "newestPriceCalc.sku) AS latestPriceCalc ON products.sku=latestPriceCalc.sku "
-                + "WHERE LOWER(name) LIKE LOWER(?) " + filter + ";";
+        String sql = "SELECT products.sku FROM products, latestprice "
+                + "WHERE products.sku = latestprice.sku AND "
+                + "LOWER(name) LIKE LOWER(?) " + filter + ";";
 
         ProductSearchRowMapper map = new ProductSearchRowMapper();
         List<ProductSKU> a = jdbcTemplate.query(sql, map, name);
@@ -69,23 +67,49 @@ public class HelperDaoImpl implements HelperDao {
      */
     public Optional<Product> grabProductDetails(int sku) {
 
-        int sku1 = sku;
+        createView();
         String sql = """
                 SELECT products.sku, name, price, ts, imgurl, canonicalurl
-                FROM products INNER JOIN (select retailprices.sku,
-                price, ts from retailprices inner join (select sku, max(ts)
-                as newestPriceTS from retailprices where sku= ? group by sku)
-                as newestPriceCalc on ts = newestPriceTS
-                and retailprices.sku = newestPriceCalc.sku) as latestPriceCalc
-                ON products.sku=latestPriceCalc.sku AND products.sku = ?
+                FROM products, latestprice WHERE products.sku=latestprice.sku AND products.sku = ?
                 ORDER BY products;
-                            """;
+                    """;
         ProductRowMapper map = new ProductRowMapper();
-        List<Product> a = jdbcTemplate.query(sql, map, sku, sku1);
+        List<Product> a = jdbcTemplate.query(sql, map, sku);
         assert (a.size() <= 1);
         map = null;
         Optional<Product> b = a.stream().findFirst();
         return b;
 
+    }
+
+    /**
+     * Checks if a view exists, if not it creates one.
+     * The view returns a list of skus, prices, and the latest
+     * timestamp associated with said skus and prices
+     */
+    public void createView() {
+
+        String query = """
+                SELECT schemaname, viewname
+                FROM pg_catalog.pg_views WHERE schemaname
+                NOT IN('pg_catalog', 'information_schema') AND viewname = 'latestprice'
+                ORDER BY schemaname, viewname;
+                        """;
+        CatalogRowMapper map = new CatalogRowMapper();
+        List<PgCatalog> a = jdbcTemplate.query(query, map);
+        int count = a.size();
+
+        if (count == 0) {
+            count++;
+            String viewCall = """
+                    create view latestPrice as
+                    select retailprices.sku as sku,price,ts from (
+                        retailprices inner join (
+                            select sku, max(ts) as maxTS from retailprices group by sku
+                        ) as latestPrice on latestprice.sku=retailprices.sku and ts=maxTS
+                    );
+                    """;
+            jdbcTemplate.execute(viewCall);
+        }
     }
 }
