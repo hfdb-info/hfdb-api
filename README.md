@@ -32,7 +32,14 @@ Once visual studio code opens, it'll have loaded the directory as a project. The
 The next step to be accomplished is installing all the necessary extensions. With vscode open, hit ctrl+p and copy/paste in the following command and hit enter:<br/>
 `ext install vscjava.vscode-java-pack esbenp.prettier-vscode Pivotal.vscode-boot-dev-pack`
 
-Once the extensions are finished installing, the last thing to do is setup the `application.properties` file. Navigate to `src/main/resources/application.properties.example` in the project directory, copy/paste it, and remove `.example` from the name. **Do not delete or rename the original file!** In application.properties, where it says password, replace it with the password to your local instance of postgres.
+Once the extensions are finished installing, the last thing to do is setup the environment variables for the program. In the search bar in the start menu, search for `edit the system environment variables`. When it has been found, open it, and click on `environment variables...` at the bottom. From here you will need to add the following **User** variables:
+
+`pgIPAddr` : `127.0.0.1`<br/>
+`pgPort` : `5432`<br/>
+`pgUser` : `postgres`<br/>
+`pgPasswd` : Set this one to your postgres password
+
+After those variables have been set, hit OK and OK to apply the changes. If vscode is open at this point, you will need to close all instances and reopen it.
 
 From there you should be good to start working.
 
