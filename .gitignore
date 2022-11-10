@@ -33,8 +33,5 @@ build/
 # .vscode/*
 # !.vscode/launch.json
 
-# exclude application.properties from tracking
-src/main/resources/application.properties
-
 # Spring log files
 *.log

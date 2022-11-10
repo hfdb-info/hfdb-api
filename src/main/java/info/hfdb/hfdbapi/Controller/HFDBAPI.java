@@ -3,8 +3,6 @@ package info.hfdb.hfdbapi.Controller;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,17 +11,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import info.hfdb.hfdbapi.Controller.Status.StatusCode;
-import info.hfdb.hfdbapi.Controller.dao.HelperDao;
 
 @RestController
 public class HFDBAPI {
-    private final HelperDao helper;
-
-    @Autowired
-    public HFDBAPI(@Lazy HelperDao a) {
-        super();
-        this.helper = a;
-    }
 
     /**
      * This returns the status of the connection and is mapped to '/status'
@@ -58,7 +48,7 @@ public class HFDBAPI {
     @GetMapping("/nameSearch/{name}/{min}/{max}")
     public List<ProductSKU> nameSearch(@PathVariable("name") String name, @PathVariable("min") int min,
             @PathVariable("max") int max) {
-        List<ProductSKU> a = helper.nameSearch("%" + name + "%", min, max);
+        List<ProductSKU> a = DatabaseWrapper.nameSearch("%" + name + "%", min, max);
         return a;
     }
 
@@ -72,7 +62,7 @@ public class HFDBAPI {
      */
     @GetMapping("/grabProductDetails/{sku}")
     public ResponseEntity<Product> grabDetails(@PathVariable("sku") int sku) {
-        Optional<Product> a = helper.grabProductDetails(sku);
+        Optional<Product> a = DatabaseWrapper.grabProductDetails(sku);
         if (a.isEmpty())
             return new ResponseEntity<Product>(HttpStatus.NOT_FOUND);
 

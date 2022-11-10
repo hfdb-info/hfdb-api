@@ -1,33 +1,14 @@
-package info.hfdb.hfdbapi.Controller.dao;
+package info.hfdb.hfdbapi.Controller;
 
 import java.util.List;
 import java.util.Optional;
+import info.hfdb.hfdbapi.HfdbApiApplication;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.stereotype.Repository;
-
-import info.hfdb.hfdbapi.Controller.CatalogRowMapper;
-import info.hfdb.hfdbapi.Controller.PgCatalog;
-import info.hfdb.hfdbapi.Controller.Product;
-import info.hfdb.hfdbapi.Controller.ProductRowMapper;
-import info.hfdb.hfdbapi.Controller.ProductSKU;
-import info.hfdb.hfdbapi.Controller.ProductSearchRowMapper;
-
-@Repository
-public class HelperDaoImpl implements HelperDao {
-
-    JdbcTemplate jdbcTemplate;
-
-    /**
-     * This sets the jdbcTemplate to provide access to the below functions
-     *
-     * @param jdbcTemplate The jdbcTemplate object being set.
-     */
-    @Autowired
-    public void SearchHelp(JdbcTemplate jdbcTemplate) {
-        this.jdbcTemplate = jdbcTemplate;
-    }
+/**
+ * This provides access to the postgres database by wrapping the various
+ * operations needed to be performed in corresponding java methods
+ */
+public class DatabaseWrapper {
 
     /**
      * this nameSearch function takes the name, a minimum price and a maximum price
@@ -39,7 +20,7 @@ public class HelperDaoImpl implements HelperDao {
      * @param max  The maximum price value to search by (can be circumvented by
      *             setting to '-1' in the URL call)
      */
-    public List<ProductSKU> nameSearch(String name, int min, int max) {
+    public static List<ProductSKU> nameSearch(String name, int min, int max) {
 
         createView();
         String filter = "";
@@ -54,7 +35,7 @@ public class HelperDaoImpl implements HelperDao {
                 + "LOWER(name) LIKE LOWER(?) " + filter + ";";
 
         ProductSearchRowMapper map = new ProductSearchRowMapper();
-        List<ProductSKU> a = jdbcTemplate.query(sql, map, name);
+        List<ProductSKU> a = HfdbApiApplication.getJdbcTemplate().query(sql, map, name);
         return a;
     }
 
@@ -65,7 +46,7 @@ public class HelperDaoImpl implements HelperDao {
      * @param sku The sku that data is being returned for
      * @return a product object wrapped in an optional object
      */
-    public Optional<Product> grabProductDetails(int sku) {
+    public static Optional<Product> grabProductDetails(int sku) {
 
         createView();
         String sql = """
@@ -74,7 +55,7 @@ public class HelperDaoImpl implements HelperDao {
                 ORDER BY products;
                     """;
         ProductRowMapper map = new ProductRowMapper();
-        List<Product> a = jdbcTemplate.query(sql, map, sku);
+        List<Product> a = HfdbApiApplication.getJdbcTemplate().query(sql, map, sku);
         assert (a.size() <= 1);
         map = null;
         Optional<Product> b = a.stream().findFirst();
@@ -87,7 +68,7 @@ public class HelperDaoImpl implements HelperDao {
      * The view returns a list of skus, prices, and the latest
      * timestamp associated with said skus and prices
      */
-    public void createView() {
+    public static void createView() {
 
         String query = """
                 SELECT schemaname, viewname
@@ -96,7 +77,7 @@ public class HelperDaoImpl implements HelperDao {
                 ORDER BY schemaname, viewname;
                         """;
         CatalogRowMapper map = new CatalogRowMapper();
-        List<PgCatalog> a = jdbcTemplate.query(query, map);
+        List<PgCatalog> a = HfdbApiApplication.getJdbcTemplate().query(query, map);
         int count = a.size();
 
         if (count == 0) {
@@ -109,7 +90,7 @@ public class HelperDaoImpl implements HelperDao {
                         ) as latestPrice on latestprice.sku=retailprices.sku and ts=maxTS
                     );
                     """;
-            jdbcTemplate.execute(viewCall);
+            HfdbApiApplication.getJdbcTemplate().execute(viewCall);
         }
     }
 }
