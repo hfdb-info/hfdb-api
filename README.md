@@ -45,7 +45,9 @@ Once the extensions are finished installing, the last thing to do is setup the e
 `pgIPAddr` : `127.0.0.1`<br/>
 `pgPort` : `5432`<br/>
 `pgUser` : `postgres`<br/>
-`pgPasswd` : Set this one to your postgres password
+`pgPasswd` : Set this one to your postgres password<br/>
+`wsIPAddr` : `127.0.0.1`<br/>
+`wsPort` : `3000`<br/>
 
 After those variables have been set, hit OK and OK to apply the changes. If vscode is open at this point, you will need to close all instances and reopen it.
 

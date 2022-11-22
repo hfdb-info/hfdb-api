@@ -10,7 +10,7 @@
             "request": "launch",
             "mainClass": "info.hfdb.hfdbapi.HfdbApiApplication",
             "projectName": "hfdb-api",
-            "args": ["${env:pgIPAddr}", "${env:pgPort}", "${env:pgUser}", "${env:pgPasswd}"]
+            "args": ["${env:pgIPAddr}", "${env:pgPort}", "${env:pgUser}", "${env:pgPasswd}", "${env:wsIPAddr}", "${env:wsPort}"]
         }
     ]
 }
