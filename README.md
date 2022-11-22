@@ -23,6 +23,14 @@ The final program to be installed in chocolatey is postgresql. Run the following
 
 We are now finished with powershell so it can be closed.
 
+Next we need to define the `hfdb-database0` database and the tables within it.
+
+First open psql and hit enter on each line until you get to the password field. Your password needs to be pasted into that field. When pasting it, it will no be echoed back so you won't see it being typed or pasted.<br/><br/>
+Once logged in, type the following command to create the database: `create database "hfdb-database0";` and hit enter. Once that command is ran, type `\l` and hit enter to verify that the database was created. Once it is verified that it was created, connect to it by typing `\c hfdb-database0` and hit enter.<br/><br/>
+Next, navigate over to the [tables repository](https://github.com/hfdb-info/tables) and open the tables.sql file and click the raw button. Then copy the table definitions and paste them into the psql terminal window. Verify that for each table, psql says that the table was created. It wouldn't hurt to press enter a couple of times at the end to make sure the multiline create table command was executed.<br/>
+
+We are now finished with psql and it can be closed.
+
 Next the repository needs to be cloned. Open github desktop and sign into it with your github account. Once signed in, clone this repository to a folder somewhere.
 
 Once github desktop has finished cloning the repository, make sure the branch selected is `development` **and not** `main` **or** `original-template` **or any other branch if any exist**. The latter branches are reserved for special uses. Unless Justin says otherwise, only use the `development` branch.
