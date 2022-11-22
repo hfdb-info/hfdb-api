@@ -22,6 +22,8 @@ public class HfdbApiApplication {
 	// Used for interacting with the database
 	private static JdbcTemplate jdbcTemplate;
 	private static Connection connection;
+	private static String loc;
+	private static String port;
 
 	public static void main(String[] args) {
 
@@ -30,6 +32,8 @@ public class HfdbApiApplication {
 
 		DataSource datasource = setupCredentials(args[0], args[1], args[2], args[3]);
 		jdbcTemplate = new JdbcTemplate(datasource);
+		loc = args[4];
+		port = args[5];
 
 		// Check to see if can interact with postgres
 		try {
@@ -61,23 +65,46 @@ public class HfdbApiApplication {
 	 */
 	private static boolean parametersCorrect(String[] args) {
 
-		final String msg = "Please provide the following parameters as such: IPAddress port username password";
-		boolean credsReady = true;
-		if (args == null || args.length != 4) {
-			System.out.println(msg);
-			credsReady = false;
-		}
-
-		if (!credsReady)
-			return false;
+		final String msg = "Please provide the following parameters as such: postgresIPAddress postgresPort postgresUsername postgresPassword webserverIPAddress webserverPort";
+		boolean credsReady = (args != null && args.length == 6);
 
 		// This is literally useless. Its so the linter will shut up about args being
 		// null. If it's actually null, it won't get this far.
 		if (args == null)
 			args = new String[0];
 
+		// Verify postgres IP and Port
+		credsReady = credsReady && ipCheck(args[0]);
+		credsReady = credsReady && portCheck(args[1]);
+
+		// Verify front end webserver IP and port
+		credsReady = credsReady && ipCheck(args[4]);
+		credsReady = credsReady && portCheck(args[5]);
+
+		if (!credsReady)
+			System.out.println(msg);
+
+		return credsReady;
+	}
+
+	private static boolean portCheck(String port) {
+		// Port check
+		boolean validPort = true;
+		validPort &= port.matches("^[1-9][0-9]{0,4}$");
+		if (validPort) {
+			int portVal = Integer.parseInt(port);
+			validPort &= (portVal > 1 && portVal < 65536);
+		}
+
+		if (!validPort)
+			System.out.println("The port " + port + " is not valid");
+
+		return validPort;
+	}
+
+	private static boolean ipCheck(String ip) {
 		// IP Address check
-		String[] octets = args[0].split("\\.");
+		String[] octets = ip.split("\\.");
 
 		// Another useless piece of code to make the linter shut up except it applies to
 		// octets this time
@@ -90,29 +117,10 @@ public class HfdbApiApplication {
 			ipPass &= octets[i].matches("^(2[0-4][0-9]|25[0-5]|1[0-9][0-9]|[1-9]?[0-9])$");
 		}
 		if (!ipPass) {
-			System.out.println("The IP address entered is not valid");
-			credsReady = false;
+			System.out.println("The IP address " + ip + " is not valid");
 		}
 
-		// Port check
-		boolean validPort = true;
-		validPort &= args[1].matches("^[1-9][0-9]{0,4}$");
-		if (validPort) {
-			int port = Integer.parseInt(args[1]);
-			validPort &= (port > 1 && port < 65536);
-		}
-
-		if (!validPort) {
-			System.out.println("The port entered is not valid");
-			credsReady = false;
-		}
-
-		if (!credsReady) {
-			System.out.println(msg);
-			return false;
-		}
-
-		return true;
+		return ipPass;
 	}
 
 	/**
@@ -142,4 +150,11 @@ public class HfdbApiApplication {
 		return jdbcTemplate;
 	}
 
+	public static String getLoc() {
+		return loc;
+	}
+
+	public static String getPort() {
+		return port;
+	}
 }
