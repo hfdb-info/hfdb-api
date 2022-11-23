@@ -1,5 +1,7 @@
 package info.hfdb.hfdbapi.Controller;
 
+import java.sql.SQLException;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Optional;
 
@@ -67,5 +69,32 @@ public class HFDBAPI {
             return new ResponseEntity<Product>(HttpStatus.NOT_FOUND);
 
         return new ResponseEntity<Product>(a.get(), HttpStatus.OK);
+    }
+
+    /**
+     * This is the grabRetailPriceHistory function and is mapped to
+     * '/grabRetailPriceHistory/{sku}/{lower}/{upper}'
+     *
+     * @param sku   The desired sku to be searched
+     * @param lower the lower bound for the timestamps, can be circumvented by
+     *              inputting -1
+     * @param upper the upper bound for the timestamps, can be circumvented by
+     *              inputting -1
+     * @return a list of products prices and the timestamps those prices were
+     *         obtained by the webscrapper, associated with a specific product sku
+     */
+    @GetMapping("/grabRetailPriceHistory/{sku}/{lower}/{upper}")
+    public ResponseEntity<List<PriceHistory>> grabRetailPriceHistory(@PathVariable("sku") int sku,
+            @PathVariable("lower") String lower,
+            @PathVariable("upper") String upper) {
+        List<PriceHistory> a;
+        try {
+            a = DatabaseWrapper.grabRetailPriceHistory(sku, lower, upper);
+        } catch (SQLException e) {
+            return new ResponseEntity<List<PriceHistory>>(HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (DateTimeParseException e) {
+            return new ResponseEntity<List<PriceHistory>>(HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity<List<PriceHistory>>(a, HttpStatus.OK);
     }
 }

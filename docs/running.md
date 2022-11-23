@@ -45,3 +45,28 @@ Example Output: returns an object as below, otherwise returns 404 if the sku is 
   "ts": "2022-09-21 03:17:39-05"
 }
 ```
+
+# grabRetailPriceHistory
+
+Returns the price and corresponding timestamp of when it was scraped, for a specified sku. If filtering is not desired then set the lower bound to an extremely minimum timezone (i.e. 1900-01-01T01:01:01Z) and the Upper bound to an extremely maximum timezone (i.e. 2100-01-01T01:01:01Z). However these timezones will need to be input using url encoding (i.e. the lower timezone would look like this: 1900-01-01T01%3A01%3A01Z)
+
+`http://localhost:8080/grabRetailPriceHistory/{sku}/{lower}/{upper}`
+
+Example Call: `http://localhost:8080/grabRetailPriceHistory/188/1900-01-01T01%3A01%3A01Z/2100-01-01T01%3A01%3A01Z`
+
+Example Output: returns an object as below
+
+```json
+{
+        "price": 1999,
+        "ts": "2022-09-21T03:36:28-05:00"
+    },
+    {
+        "price": 1999,
+        "ts": "2022-10-10T18:35:45-05:00"
+    },
+    {
+        "price": 1999,
+        "ts": "2022-10-10T19:11:20-05:00"
+    }
+```
