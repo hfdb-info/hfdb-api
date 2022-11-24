@@ -1,5 +1,14 @@
 package info.hfdb.hfdbapi.Controller;
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import info.hfdb.hfdbapi.HfdbApiApplication;
@@ -61,6 +70,50 @@ public class DatabaseWrapper {
         Optional<Product> b = a.stream().findFirst();
         return b;
 
+    }
+
+    /**
+     * This grabRetailPriceHistory function returns the price and timestamp the
+     * price was gathered by the webscraper associated with a specific sku. This can
+     * be further filtered with the optional lower and upper bounds.
+     *
+     * @param sku   the sku that data is being returned for
+     * @param lower optional lower bound filter, circumvented with -1
+     * @param upper optional upper bound filter, circumvented with -1
+     * @return a list of prices and corresponding timestamps associated with
+     *         specified sku
+     * @throws SQLException           when SQL Error is provoked
+     * @throws DateTImeParseException when upper or lower bound is improperly
+     *                                formatted
+     */
+    public static List<PriceHistory> grabRetailPriceHistory(int sku, String lower, String upper)
+            throws SQLException, DateTimeParseException {
+
+        ZonedDateTime dtUpper = ZonedDateTime.parse(upper);
+        Timestamp tsUpper = Timestamp.from(dtUpper.toInstant());
+        ZonedDateTime dtLower = ZonedDateTime.parse(lower);
+        Timestamp tsLower = Timestamp.from(dtLower.toInstant());
+
+        String sql = "SELECT price, ts FROM retailprices WHERE sku = ? AND ts <= ? AND ts >= ? ORDER BY ts;";
+
+        PreparedStatement ps = HfdbApiApplication.getConnection().prepareStatement(sql,
+                ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+        ps.setInt(1, sku);
+        ps.setTimestamp(2, tsUpper);
+        ps.setTimestamp(3, tsLower);
+
+        ResultSet rs = ps.executeQuery();
+        List<PriceHistory> a = new LinkedList<>();
+
+        while (rs.next()) {
+            int price = rs.getInt("price");
+            Timestamp ts = rs.getTimestamp("ts");
+            ZonedDateTime dt = ZonedDateTime.of(ts.toLocalDateTime(), ZoneId.systemDefault());
+            PriceHistory p = new PriceHistory(price,
+                    dt.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME));
+            a.add(p);
+        }
+        return a;
     }
 
     /**
