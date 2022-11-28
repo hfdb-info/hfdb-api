@@ -73,18 +73,22 @@ public class HfdbApiApplication {
 		if (args == null)
 			args = new String[0];
 
-		// Verify postgres IP and Port
-		credsReady = credsReady && ipCheck(args[0]);
+		// Verify postgres IP/domain and Port
+		credsReady = credsReady && (ipCheck(args[0]) || domCheck(args[0]));
 		credsReady = credsReady && portCheck(args[1]);
 
-		// Verify front end webserver IP and port
-		credsReady = credsReady && ipCheck(args[4]);
+		// Verify front end webserver IP/domain and port
+		credsReady = credsReady && (ipCheck(args[4]) || domCheck(args[4]));
 		credsReady = credsReady && portCheck(args[5]);
 
 		if (!credsReady)
 			System.out.println(msg);
 
 		return credsReady;
+	}
+
+	private static boolean domCheck(String string) {
+		return string.matches("^[0-9A-Za-z][0-9A-Za-z\\.]+[0-9A-Za-z]$");
 	}
 
 	private static boolean portCheck(String port) {
